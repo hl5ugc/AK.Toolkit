@@ -5,6 +5,14 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.System;
 using static System.Net.Mime.MediaTypeNames;
+using static System.Net.WebRequestMethods;
+
+/// <remarks>
+/// https://youtu.be/G17jbGSXLnk?si=jumeyg23f0zn-7UR
+/// https://github.com/AndrewKeepCoding/AK.Toolkit.git
+/// AK.Toolkit.WinUI3.AutoCompleteTextBox
+/// AK.Toolkit.Utilities.RandomStringGenerator
+/// </remarks>
 
 namespace AK.Toolkit.WinUI3;
 
@@ -19,6 +27,10 @@ namespace AK.Toolkit.WinUI3;
 /// Otherwise the suggestion might 
 /// </remarks>
 
+/// TextBlock가 중요한 역할을 하기 때문에 해당 컨트롤을 코드에서 직접 제어를 해야한다.
+/// 그래서, TemplatePart라고 속성을 추가하고, 
+/// OnApplyTemplate() 에서 각 내부 변수들에 GetTemplateChild를 이용해서 인스턴스를 땡겨온다.
+///
 [TemplatePart(Name = PlaceholderControlName,Type = typeof(TextBlock))]
 
 public sealed class AutoCompleteTextBox : TextBox
@@ -108,8 +120,10 @@ public sealed class AutoCompleteTextBox : TextBox
     {
         base.OnApplyTemplate();
 
+        // 내부 변수들에 GetTemplateChild를 이용해서 인스턴스를 땡겨온다.
         PlaceholderControl = GetTemplateChild(PlaceholderControlName) as TextBlock;
 
+        // 이벤트 핸들러를 추가 한다.
         if(PlaceholderControl != null)
         {
             OriginalPlacegolderText = PlaceholderControl.Text;
@@ -140,13 +154,21 @@ public sealed class AutoCompleteTextBox : TextBox
  
         }
     }
-
+    /// <summary>
+    /// suggestionsSource 콜렉션에 있는 문자열에서 input 조건맞는 문자열을 찾아서 반환한다.
+    /// </summary>
+    /// <param name="input"></param> 입력된 문자열
+    /// <param name="ignoreCase"></param>
+    /// <param name="suggestionsSource"></param> suggestions 콜렉션
+    /// <returns></returns>
     private static string GetSuggestion(string input,bool ignoreCase,IEnumerable<string> suggestionsSource)
     {
         string? suggestion = string.Empty;
 
         if((input.Length > 0) && (suggestionsSource is not null))
         {
+            /// FirstOrDefault() 함수는 컬렉션에서 첫 번째 요소를 반환하거나 또는 조건을 만족하는 여러 요소 중에서 첫 번째 요소를 반환합니다.
+            /// string.StartsWith 지정한 문화권을 사용하여 비교할 때 이 문자열 인스턴스의 시작 부분과 지정한 문자열이 일치하는지를 확인합니다.
             var result = suggestionsSource.FirstOrDefault(x => x.StartsWith(input, ignoreCase, culture: null));
             if (result is not null)
             {
@@ -156,7 +178,11 @@ public sealed class AutoCompleteTextBox : TextBox
 
         return suggestion;
     }
-
+    /// <summary>
+    /// text 를 PlaceholderControl.Text에 저장 and Visibility
+    /// </summary>
+    /// <param name="text"></param>
+    /// <param name="visibility"></param>
     private void UpdatePlaceholderControl(string text, Visibility visibility)
     {
         if(PlaceholderControl != null)
@@ -165,7 +191,7 @@ public sealed class AutoCompleteTextBox : TextBox
             PlaceholderControl.Visibility = visibility;
         }
     }
-
+    // acceptSuggestion : true => 제안된 문자열을 받아들임
     private void UpdateSuggestion(bool acceptSuggestion)
     {
         if (Text.Length == 0 || LastAcceptedSuggestion.Equals(Text) is not true)
@@ -173,10 +199,14 @@ public sealed class AutoCompleteTextBox : TextBox
             bool ignoreCase = (IsSuggestionCaseSensitive is false);
             string suggestion = GetSuggestion(Text, ignoreCase, SuggestionsSource);
 
-            if (suggestion.Length > 0)
+            if (suggestion.Length > 0) // SuggestionsSource에서 Text를 찾았을 때
             {
-                string text = suggestion[Text.Length..].PadLeft(suggestion.Length);
+                // PadRight("문자를 붙인 후 문자열 전체 길이수", 문자열 오른쪽에 붙이고 싶은 문자)
+                // if Text is "K" then Text.Length = 1 ,if suggestion = "Kang" then suggestion.Length = 4
+                // suggestion[1..].PadLeft(4) => suggestion = " ang"
+                string text = suggestion[Text.Length..].PadLeft(suggestion.Length,'.');
                 text += SuggestionSuffix;
+                //
                 UpdatePlaceholderControl(text, Visibility.Visible);
             }
             else if (Text.Length == 0)
@@ -186,9 +216,8 @@ public sealed class AutoCompleteTextBox : TextBox
             else
             {
                 UpdatePlaceholderControl(OriginalPlacegolderText, Visibility.Collapsed);
-            
             }
-
+            //
             if(acceptSuggestion is true && suggestion.Length > 0)
             {
                 UpdatePlaceholderControl(OriginalPlacegolderText, Visibility.Collapsed);
