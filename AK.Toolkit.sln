@@ -3,9 +3,26 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34601.278
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WinUI3", "WinUI3", "{17FE7315-3045-4F68-8C66-12B12D79B074}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AK.Toolkit.WinUI3.AutoCompleteTextBox", "WinUI3\AK.Toolkit.WinUI3.AutoCompleteTextBox\AK.Toolkit.WinUI3.AutoCompleteTextBox.csproj", "{5AECC00D-CC24-4A90-B037-81414758375D}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5AECC00D-CC24-4A90-B037-81414758375D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AECC00D-CC24-4A90-B037-81414758375D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AECC00D-CC24-4A90-B037-81414758375D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AECC00D-CC24-4A90-B037-81414758375D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5AECC00D-CC24-4A90-B037-81414758375D} = {17FE7315-3045-4F68-8C66-12B12D79B074}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6113A8DF-D49C-4980-9850-74B8A1F70E46}
